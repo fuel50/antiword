@@ -33,8 +33,8 @@ PROGS =\
 	antiword\
 	kantiword
 
-LOCAL_INSTALL_DIR = $(HOME)/bin
-LOCAL_RESOURCES_DIR = $(HOME)/.antiword
+LOCAL_INSTALL_DIR = $(GLOBAL_INSTALL_DIR)
+LOCAL_RESOURCES_DIR = $(GLOBAL_RESOURCES_DIR)
 
 GLOBAL_INSTALL_DIR = /usr/local/bin
 GLOBAL_RESOURCES_DIR = /usr/share/antiword
@@ -42,14 +42,9 @@ GLOBAL_RESOURCES_DIR = /usr/share/antiword
 all:		$(PROGS)
 
 install:	all
-	mkdir -p $(LOCAL_INSTALL_DIR)
-	cp -pf $(PROGS) $(LOCAL_INSTALL_DIR)
-	mkdir -p $(LOCAL_RESOURCES_DIR)
-	cp -pf Resources/* $(LOCAL_RESOURCES_DIR)
+	$(MAKE) global_install
 
-# NOTE: you might have to be root to do this
 global_install:	all
-#	@[ `id -u` -eq 0 ] || (echo "You must be root to do this" && false)
 	mkdir -p $(DESTDIR)$(GLOBAL_INSTALL_DIR)
 	$(INSTALL_PROGRAM) $(PROGS) $(DESTDIR)$(GLOBAL_INSTALL_DIR)
 	cd $(DESTDIR)$(GLOBAL_INSTALL_DIR); chmod 755 $(PROGS)
@@ -59,9 +54,7 @@ global_install:	all
 	$(INSTALL_DATA) Resources/fontnames $(DESTDIR)$(GLOBAL_RESOURCES_DIR)
 	cd $(DESTDIR)$(GLOBAL_RESOURCES_DIR); chmod 644 *.txt fontnames
 
-# NOTE: you might have to be root to do this
 global_uninstall:
-#	@[ `id -u` -eq 0 ] || (echo "You must be root to do this" && false)
 	cd $(DESTDIR)$(GLOBAL_INSTALL_DIR); rm -f $(PROGS)
 	-rmdir $(DESTDIR)$(GLOBAL_INSTALL_DIR)
 	cd $(DESTDIR)$(GLOBAL_RESOURCES_DIR); rm -f *.txt fontnames
